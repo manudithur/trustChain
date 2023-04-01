@@ -78,6 +78,10 @@ contract AgreementContract is Ownable{
         return addressToIds[msg.sender];
     }
 
+    function getAgreement(uint64 _agreementId) public view returns(Agreement memory){
+        return idToAgreement[_agreementId];
+    }
+
     function getBalance(uint64 _agreementId) public view returns(uint256){
         return idToAgreement[_agreementId].balance;
     }
