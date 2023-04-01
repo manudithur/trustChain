@@ -8,7 +8,7 @@
  */
 pragma solidity ^0.8.9;
 
-import "../IArbitrator.sol";
+import "./IArbitrator.sol";
 
 contract Arbitrator is IArbitrator {
     address public owner = msg.sender;
@@ -31,7 +31,7 @@ contract Arbitrator is IArbitrator {
         return 0.1 ether;
     }
 
-    function createDispute(uint256 _choices, bytes memory _extraData, bytes agreementCID)
+    function createDispute(uint256 _choices, bytes memory _extraData, bytes memory agreementCID)
         public
         payable
         override
