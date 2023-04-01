@@ -120,6 +120,26 @@ const useStyles = createStyles((theme) => ({
     justifyContent: 'center',
     minHeight: '100vh',
   },
+  wrapper: {
+    position: 'relative',
+    marginBottom: rem(30),
+  },
+
+  dropzone: {
+    borderWidth: rem(1),
+    paddingBottom: rem(50),
+  },
+
+  icon: {
+    color: theme.colorScheme === 'dark' ? theme.colors.dark[3] : theme.colors.gray[4],
+  },
+
+  control2: {
+    position: 'absolute',
+    width: rem(250),
+    left: `calc(50% - ${rem(125)})`,
+    bottom: rem(-20),
+  },
 }));
 
 export function HeroImageRight() {
@@ -147,9 +167,10 @@ export function ContainedInputs() {
   const { classes } = useStyles();
 
   return (
-    <div>
-      <TextInput label="Buyer Wallet" placeholder="0x000000000000000000000000000000000000dEaD" labelProps={{ style: { color: 'white' } }}/>
-      <TextInput mt={'sm'} label="Agreement Amount" placeholder="0" rightSection={<TextInput variant="unstyled" size="xs" value="ETH" readOnly />} labelProps={{ style: { color: 'white' } }}/>
+    <div style={{alignContent: 'center', height: "100vh"}}>
+      <TextInput mx={100} label="Buyer Wallet" placeholder="0x000000000000000000000000000000000000dEaD" labelProps={{ style: { color: 'white' } }}/>
+      <TextInput mx={100} mt={'sm'} label="Agreement Amount" placeholder="0" rightSection={<TextInput variant="unstyled" size="xs" value="ETH" readOnly />} labelProps={{ style: { color: 'white' } }}/>
+      <DropzoneButton></DropzoneButton>
       <Button
               variant="gradient"
               gradient={{ from: 'pink', to: 'yellow' }}
@@ -158,7 +179,67 @@ export function ContainedInputs() {
               mt={40}
             >
               Create Agreement
-    </Button>
+      </Button>
+    </div>
+  );
+}
+
+import { useRef } from 'react';
+import { Group} from '@mantine/core';
+import { Dropzone, MIME_TYPES } from '@mantine/dropzone';
+import { IconCloudUpload, IconX, IconDownload } from '@tabler/icons-react';
+
+
+export function DropzoneButton() {
+  const { classes, theme } = useStyles();
+  const openRef = useRef<() => void>(null);
+
+  return (
+    <div className={classes.wrapper} style={{marginLeft: 300, marginRight: 300, marginTop: 50}}>
+      <Dropzone
+        openRef={openRef}
+        onDrop={() => {}}
+        className={classes.dropzone}
+        radius="md"
+        accept={[MIME_TYPES.pdf]}
+        maxSize={30 * 1024 ** 2}
+      >
+        <div style={{ pointerEvents: 'none' }}>
+          <Group position="center">
+            <Dropzone.Accept>
+              <IconDownload
+                size={rem(50)}
+                color={theme.colors[theme.primaryColor][6]}
+                stroke={1.5}
+              />
+            </Dropzone.Accept>
+            <Dropzone.Reject>
+              <IconX size={rem(50)} color={theme.colors.red[6]} stroke={1.5} />
+            </Dropzone.Reject>
+            <Dropzone.Idle>
+              <IconCloudUpload
+                size={rem(50)}
+                color={theme.colorScheme === 'dark' ? theme.colors.dark[0] : theme.black}
+                stroke={1.5}
+              />
+            </Dropzone.Idle>
+          </Group>
+
+          <Text ta="center" fw={700} fz="lg" mt="xl">
+            <Dropzone.Accept>Drop Agreement Here</Dropzone.Accept>
+            <Dropzone.Reject>Pdf file less than 30mb</Dropzone.Reject>
+            <Dropzone.Idle>Upload Agreement File</Dropzone.Idle>
+          </Text>
+          <Text ta="center" fz="sm" mt="xs" c="dimmed">
+            Drag&apos;n&apos;drop files here to upload. We can accept only <i>.pdf</i> files that
+            are less than 30mb in size.
+          </Text>
+        </div>
+      </Dropzone>
+
+      <Button className={classes.control2} variant="gradient" gradient={{ from: 'pink', to: 'yellow' }} size="sm" radius="md" onClick={() => openRef.current?.()}>
+        Select files
+      </Button>
     </div>
   );
 }

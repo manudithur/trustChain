@@ -14,7 +14,7 @@ import {
 } from '@mantine/core';
 import { MantineLogo } from '@mantine/ds';
 import { useDisclosure } from '@mantine/hooks';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const useStyles = createStyles((theme) => ({
   link: {
@@ -100,18 +100,16 @@ export async function api(){
   }
 }
 
-export function HeaderMegaMenu() {
+type HeaderMegaMenuProps = {
+  label: string;
+  fun: () => void;
+};
+
+
+export function HeaderMegaMenu( {label, fun }: HeaderMegaMenuProps) {
   const [drawerOpened, { toggle: toggleDrawer }] = useDisclosure(false);
   const { classes } = useStyles();
-  const [address, setAddress] = useState('Connect Wallet');
 
-
-  async function apiManager(){
-    const add = await api();
-    setAddress(add)
-    localStorage.setItem('address', add)
-  }
-  
   return (
     <div style={{ position: "fixed", top: 0, width: "100%", zIndex: 1 }}>
       <Box pb={0}>
@@ -120,8 +118,8 @@ export function HeaderMegaMenu() {
           <MantineLogo size={30} />
 
           <Group className={classes.hiddenMobile}>
-            <Button onClick={apiManager} >
-              {address}
+            <Button onClick={fun} >
+              {label}
             </Button>
           </Group>
 
@@ -132,22 +130,32 @@ export function HeaderMegaMenu() {
     </div>
   );
 }
+import { useLocalStorage } from '@mantine/hooks';
+
+
 
 export default function App({ Component, pageProps }: AppProps) {
+
+  const [address, setAddress] = useLocalStorage<string>({
+    key: "address",
+    defaultValue: "Connect Wallet"
+  }) 
+
+  async function apiManager() {
+    const add = await api();
+    setAddress(add);
+  }
+
   return (
     <>
       <Head>
         <title>Trust Chain</title>
         <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />
       </Head>
-        <HeaderMegaMenu/>
-          <MantineProvider
-            withGlobalStyles
-            withNormalizeCSS
-            theme={{ colorScheme: 'light' }}
-          >
-            <Component {...pageProps} />
-          </MantineProvider>
+      <HeaderMegaMenu label={address} fun={apiManager} />
+      <MantineProvider withGlobalStyles withNormalizeCSS theme={{ colorScheme: "light" }}>
+        <Component {...pageProps} />
+      </MantineProvider>
     </>
   );
 }
