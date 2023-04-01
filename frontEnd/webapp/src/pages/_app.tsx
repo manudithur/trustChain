@@ -74,6 +74,24 @@ const useStyles = createStyles((theme) => ({
     },
   },
 }));
+export  async function api(){
+  
+  
+  if (window.ethereum) {
+    try {
+      // Solicitar la cuenta del usuario de Metamask
+      await window.ethereum.request({ method: 'eth_requestAccounts' });
+
+      // Obtener la dirección de la billetera del usuario
+      const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+      console.log(accounts[0]);
+    } catch (error) {
+      console.log(error);
+    }
+  } else {
+    console.log('Metamask no detectado');
+  }
+}
 
 export function HeaderMegaMenu() {
   const [drawerOpened, { toggle: toggleDrawer }] = useDisclosure(false);
@@ -98,7 +116,7 @@ export function HeaderMegaMenu() {
           </Group> */}
 
           <Group className={classes.hiddenMobile}>
-            <Button>
+            <Button onClick={api}>
               Connect Wallet
             </Button>
           </Group>
