@@ -2,36 +2,58 @@ pragma solidity ^0.8.9;
 import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/finance/PaymentSplitter.sol";
 
-contract AgreementContract {
+import "./IArbitrator.sol";
+
+contract AgreementContract{
 
     uint64 _agreementCounter = 0;
+
+    enum Status{
+        Initial,
+        Reclaimed,
+        Disputed,
+        Resolved,
+        Finished
+    }
+
+    enum RulingOptions {
+        Initial,
+        PayerWins,
+        PayeeWins
+    }
 
     struct Agreement{
         address provider;
         address buyer;
         uint256 balance;
         uint8 checkpoint;
-        bool canClaim;
         bool paid;
         bool advanceProvider;
         bool advanceBuyer;
         bool disputable;
+        Status status;
+        RulingOptions ruling;
+        bytes cid;
     }
+
+    IArbitrator public arbitrator;
 
     mapping (uint64 => Agreement) private idToAgreement;
     mapping (address => uint64[]) private addressToIds;
+    mapping (uint256 => uint64) private disputeToAgreement;
 
     function createAgreement(uint256 _balance) public returns (uint64) {
         uint64 agreementId = _agreementCounter++;
         addressToIds[msg.sender].push(agreementId);
         idToAgreement[agreementId].provider = msg.sender;
         idToAgreement[agreementId].balance = _balance;
-        idToAgreement[agreementId].canClaim = false;
         idToAgreement[agreementId].paid = false;
         idToAgreement[agreementId].advanceBuyer =false;
         idToAgreement[agreementId].advanceProvider=false;
         idTOAgreement[agreementId].disputable = true;
         idToAgreement[agreementId].checkpoint=0;
+        idToAgreement[agreementId].status = Status.Initial;
+        idToAgreement[agreementId].ruling = RulingOptions.Initial;
 
         return agreementId;
     }
@@ -56,37 +78,56 @@ contract AgreementContract {
     }
 
     function claim(uint64 _agreementId) public {
-        mediate(_agreementId);
+        
+        require(idToAgreement[_agreementId].checkpoint == 3);
         require(idToAgreement[_agreementId].provider == msg.sender);
-        require(idToAgreement[_agreementId].canClaim);
+        require(idToAgreement[_agreementId].status == Status.Initial || idToAgreement[_agreementId].status == Status.Resolved);
+
+        if(idToAgreement[_agreementId].status == Status.Resolved){
+            require(idToAgreement[_agreementId].ruling == RulingOptions.PayeeWins);
+        }
+
+        //Transfer balance to provider
         Address.sendValue(payable(msg.sender), idToAgreement[_agreementId].balance);
+        idToAgreement[_agreementId].status = Status.Finished;
+
         //idToAgreement[_agreementId].provider.transfer(idToAgreement[_agreementId].balance);
     }
+    
 
-    //returns 0 when ok
-    //returns 1 when money should be sent to buyer
-    //returns 2 when money should be sent to provider
-    function oracle() public returns(uint8) {
-        return 0;
-    }
-
-    function mediate(uint64 _agreementId) public{
-        if(oracle() == 0){
-            idToAgreement[_agreementId].canClaim = true;
-        }
-        // }else if(oracle() == 1){
-        //     idToAgreement[_agreementId].buyer.transfer(idToAgreement[_agreementId].balance);
-        // }else {
-        //     idToAgreement[_agreementId].provider.transfer(idToAgreement[_agreementId].balance);
-        // }
-    }
-
-    function dispute(uint64 _agreementId) public {
-        require(msg.sender == idToAgreement[_agreementId].buyer || msg.sender == idToAgreement[_agreementId].provider);
+    function reclaimFunds(uint64 _agreementId) public payable{
+        require(msg.sender == idToAgreement[_agreementId].buyer);
+        require(idToAgreement[_agreementId].status == Status.Initial || idToAgreement[_agreementId].status == Status.Resolved);
         idToAgreement[_agreementId].disputable = false;
-        //DISPUTE WITH ARBITRATOR
 
+        if(idToAgreement[_agreementId].status == Status.Resolved){
+            require(idToAgreement[_agreementId].ruling == RulingOptions.PayerWins);
+            Address.sendValue(payable(msg.sender), idToAgreement[_agreementId].balance);
+            idToAgreement[_agreementId].status = Status.Finished;
+
+        } else{
+            uint256 arbitrationCost = arbitrator.arbitrationCost("");
+            require(msg.value >= arbitrationCost, "Not enough ETH to cover arbitration costs.");
+            uint265 disputeID = arbitrator.createDispute{value: msg.value}(2, "", idToAgreement[_agreementId].cid);
+            disputeToAgreement[disputeID] = _agreementId;
+            idToAgreement[_agreementId].status = Status.Disputed;
+        }
     }
+
+    function rule(uint256 disputeID, uint256 _ruling) public{
+        require(msg.sender == address(arbitrator));
+
+        uint64 = id = disputeToAgreement[disputeID];
+
+        require(idToAgreement[id].status == Status.disputed);
+
+        if(_ruling == 1){
+            idToAgreement[id].ruling = RulingOptions.PayerWins;
+        }else if(_ruling == 2){
+            idToAgreement[id].ruling = RulingOptions.PayeeWins;
+        }
+        idToAgreement[id].status = Status.Resolved;
+    } 
 
     function checkpointBuyer(uint64 _agreementId) public{
         require(msg.sender==idToAgreement[_agreementId].buyer);
