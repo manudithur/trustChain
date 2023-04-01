@@ -58,6 +58,10 @@ contract AgreementContract{
         return agreementId;
     }
 
+    function setArbitrator(address _arbitrator) public onlyOwner{
+        arbitrator = IArbitrator(_arbitrator);
+    }
+
     function signAgreement(uint64 _agreementId) public payable{
         // TODO revisar lo del hex:
         require(msg.value == idToAgreement[_agreementId].balance );
