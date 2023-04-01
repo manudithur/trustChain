@@ -45,9 +45,26 @@ contract Agreement {
     }
 
     function claim(uint64 _agreementId) public {
-        require(idToAgreement[_agreementId].buyer == msg.sender);
+        require(idToAgreement[_agreementId].provider == msg.sender);
         require(idToAgreement[_agreementId].canClaim);
-        idToAgreement[_agreementId].buyer.transfer(idToAgreement[_agreementId].balance);
+        idToAgreement[_agreementId].provider.transfer(idToAgreement[_agreementId].balance);
+    }
+
+    //returns 0 when ok
+    //returns 1 when money should be sent to buyer
+    //returns 2 when money should be sent to provider
+    function oracle() public returns(uint8) {
+        return 0;
+    }
+
+    function mediate(){
+        if(oracle() == 0){
+            idToAgreement[_agreementId].canClaim = true;
+        }elif(oracle() == 1){
+            idToAgreement[_agreementId].buyer.transfer(idToAgreement[_agreementId].balance);
+        }else {
+            idToAgreement[_agreementId].provider.transfer(idToAgreement[_agreementId].balance);
+        }
     }
 
 }
