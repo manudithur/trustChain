@@ -40,6 +40,10 @@ contract Agreement {
         return addressToIds[msg.sender];
     }
 
+    function getBalance(uint64 _agreementId) public view returns(uint256){
+        return idToAgreement[_agreementId].balance;
+    }
+
     function claim(uint64 _agreementId) public {
         require(idToAgreement[_agreementId].buyer == msg.sender);
         require(idToAgreement[_agreementId].canClaim);
