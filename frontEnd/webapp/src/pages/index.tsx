@@ -1,123 +1,209 @@
-import Head from 'next/head'
-import Image from 'next/image'
-import { Inter } from 'next/font/google'
-import styles from '@/styles/Home.module.css'
+import { createStyles, Container, Title, Text, Button, rem } from '@mantine/core';
 
-const inter = Inter({ subsets: ['latin'] })
+const useStyles = createStyles((theme) => ({
+  root: {
+    backgroundColor: '#11284b',
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    backgroundImage:
+      'linear-gradient(250deg, rgba(130, 201, 30, 0) 0%, #062343 70%), url(https://xmple.com/wallpaper/black-blue-gradient-linear-3840x2160-c2-000000-0000cd-a-105-f-14.svg)',
+    paddingTop: `calc(${theme.spacing.xl} * 3)`,
+    paddingBottom: `calc(${theme.spacing.xl} * 3)`,
+  },
+
+  inner: {
+    display: 'flex',
+    justifyContent: 'space-between',
+
+    [theme.fn.smallerThan('md')]: {
+      flexDirection: 'column',
+    },
+  },
+
+  image: {
+    [theme.fn.smallerThan('md')]: {
+      display: 'none',
+    },
+  },
+
+  content: {
+    paddingTop: `calc(${theme.spacing.xl} * 2)`,
+    paddingBottom: `calc(${theme.spacing.xl} * 2)`,
+    marginRight: `calc(${theme.spacing.xl} * 3)`,
+
+    [theme.fn.smallerThan('md')]: {
+      marginRight: 0,
+    },
+  },
+
+  title: {
+    color: theme.white,
+    fontFamily: `Greycliff CF, ${theme.fontFamily}`,
+    fontWeight: 900,
+    lineHeight: 1.05,
+    maxWidth: rem(500),
+    fontSize: rem(48),
+
+    [theme.fn.smallerThan('md')]: {
+      maxWidth: '100%',
+      fontSize: rem(34),
+      lineHeight: 1.15,
+    },
+  },
+
+  title2: {
+    fontSize: rem(34),
+    fontWeight: 900,
+
+    [theme.fn.smallerThan('sm')]: {
+      fontSize: rem(24),
+    },
+  },
+
+  description: {
+    color: theme.white,
+    opacity: 0.75,
+    maxWidth: rem(500),
+
+    [theme.fn.smallerThan('md')]: {
+      maxWidth: '100%',
+    },
+  },
+
+  control: {
+    paddingLeft: rem(50),
+    paddingRight: rem(50),
+    fontFamily: `Greycliff CF, ${theme.fontFamily}`,
+    fontSize: rem(22),
+
+    [theme.fn.smallerThan('md')]: {
+      width: '100%',
+    },
+  },
+
+  card: {
+    border: `${rem(1)} solid ${
+      theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.gray[1]
+    }`,
+  },
+
+  cardTitle: {
+    '&::after': {
+      content: '""',
+      display: 'block',
+      backgroundColor: theme.fn.primaryColor(),
+      width: rem(45),
+      height: rem(2),
+      marginTop: theme.spacing.sm,
+    },
+  },
+}));
+
+export function HeroImageRight() {
+  const { classes } = useStyles();
+  return (
+    <div className={classes.root}>
+      <Container size="lg">
+        <div className={classes.inner}>
+          <div className={classes.content}>
+            <Title className={classes.title}>
+              A{' '}
+              <Text
+                component="span"
+                inherit
+                variant="gradient"
+                gradient={{ from: 'pink', to: 'yellow' }}
+              >
+                fully secure
+              </Text>{' '}
+              payment method for cargo
+            </Title>
+
+            <Text className={classes.description} mt={30}>
+              Built in blockchain technology in order to provide security and transparency.
+            </Text>
+
+            <Button
+              variant="gradient"
+              gradient={{ from: 'pink', to: 'yellow' }}
+              size="xl"
+              className={classes.control}
+              mt={40}
+            >
+              Connect Wallet
+            </Button>
+          </div>
+        </div>
+      </Container>
+    </div>
+  );
+}
+
+import {
+  Badge,
+  Group,
+  Card,
+  SimpleGrid
+} from '@mantine/core';
+import { IconGauge, IconUser, IconCookie } from '@tabler/icons-react';
+
+const mockdata = [
+  {
+    title: 'Transparency',
+    description:
+      'This dust is actually a powerful poison that will even make a pro wrestler sick, Regice cloaks itself with frigid air of -328 degrees Fahrenheit',
+    icon: IconGauge,
+  },
+  {
+    title: 'Privacy',
+    description:
+      'People say it can run at the same speed as lightning striking, Its icy body is so cold, it will not melt even if it is immersed in magma',
+    icon: IconUser,
+  },
+  {
+    title: 'Security',
+    description:
+      'They’re popular, but they’re rare. Trainers who show them off recklessly may be targeted by thieves',
+    icon: IconCookie,
+  },
+];
+
+export function FeaturesCards() {
+  const { classes, theme } = useStyles();
+  const features = mockdata.map((feature) => (
+    <Card key={feature.title} shadow="md" radius="md" className={classes.card} padding="xl">
+      <feature.icon size={rem(50)} stroke={2} color={theme.fn.primaryColor()} />
+      <Text fz="lg" fw={500} className={classes.cardTitle} mt="md">
+        {feature.title}
+      </Text>
+      <Text fz="sm" c="dimmed" mt="sm">
+        {feature.description}
+      </Text>
+    </Card>
+  ));
+
+  return (
+    <Container size="lg" pt="xl" pb={70}>
+      <Group position="center">
+        <Badge variant="filled" size="lg" p={30}>
+        <Title>
+            Use Cases
+        </Title>
+        </Badge>
+      </Group>
+
+      <SimpleGrid cols={3} spacing="xl" mt={50} breakpoints={[{ maxWidth: 'md', cols: 1 }]}>
+        {features}
+      </SimpleGrid>
+    </Container>
+  );
+}
 
 export default function Home() {
   return (
-    <>
-      <Head>
-        <title>Create Next App</title>
-        <meta name="description" content="Generated by create next app" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-      <main className={styles.main}>
-        <div className={styles.description}>
-          <p>
-            Get started by editing&nbsp;
-            <code className={styles.code}>src/pages/index.tsx</code>
-          </p>
-          <div>
-            <a
-              href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              By{' '}
-              <Image
-                src="/vercel.svg"
-                alt="Vercel Logo"
-                className={styles.vercelLogo}
-                width={100}
-                height={24}
-                priority
-              />
-            </a>
-          </div>
-        </div>
-
-        <div className={styles.center}>
-          <Image
-            className={styles.logo}
-            src="/next.svg"
-            alt="Next.js Logo"
-            width={180}
-            height={37}
-            priority
-          />
-          <div className={styles.thirteen}>
-            <Image
-              src="/thirteen.svg"
-              alt="13"
-              width={40}
-              height={31}
-              priority
-            />
-          </div>
-        </div>
-
-        <div className={styles.grid}>
-          <a
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <h2 className={inter.className}>
-              Docs <span>-&gt;</span>
-            </h2>
-            <p className={inter.className}>
-              Find in-depth information about Next.js features and&nbsp;API.
-            </p>
-          </a>
-
-          <a
-            href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <h2 className={inter.className}>
-              Learn <span>-&gt;</span>
-            </h2>
-            <p className={inter.className}>
-              Learn about Next.js in an interactive course with&nbsp;quizzes!
-            </p>
-          </a>
-
-          <a
-            href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <h2 className={inter.className}>
-              Templates <span>-&gt;</span>
-            </h2>
-            <p className={inter.className}>
-              Discover and deploy boilerplate example Next.js&nbsp;projects.
-            </p>
-          </a>
-
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <h2 className={inter.className}>
-              Deploy <span>-&gt;</span>
-            </h2>
-            <p className={inter.className}>
-              Instantly deploy your Next.js site to a shareable URL
-              with&nbsp;Vercel.
-            </p>
-          </a>
-        </div>
-      </main>
-    </>
+    <div>
+        <HeroImageRight></HeroImageRight>
+        <FeaturesCards></FeaturesCards>
+    </div>
   )
 }
