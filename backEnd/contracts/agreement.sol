@@ -10,8 +10,11 @@ contract AgreementContract {
         address provider;
         address buyer;
         uint256 balance;
+        uint8 checkpoint;
         bool canClaim;
         bool paid;
+        bool advanceProvider;
+        bool advanceBuyer;
     }
 
     mapping (uint64 => Agreement) private idToAgreement;
@@ -24,6 +27,10 @@ contract AgreementContract {
         idToAgreement[agreementId].balance = _balance;
         idToAgreement[agreementId].canClaim = false;
         idToAgreement[agreementId].paid = false;
+        idToAgreement[agreementId].advanceBuyer =false;
+        idToAgreement[agreementId].advanceProvider=false;
+        idToAgreement[agreementId].checkpoint=0;
+
         return agreementId;
     }
 
@@ -70,6 +77,29 @@ contract AgreementContract {
         // }else {
         //     idToAgreement[_agreementId].provider.transfer(idToAgreement[_agreementId].balance);
         // }
+    }
+
+    function checkpointBuyer(uint64 _agreementId) function public{
+        require(msg.sender==idToAgreement[_agreementId].buyer);
+        idToAgreement[_agreementId].advanceBuyer =true;
+        if(idToAgreement[_agreementId].advanceProvider){
+            idToAgreement[_agreementId].checkpoint++;
+            idToAgreement[_agreementId].advanceBuyer =false;
+            idToAgreement[_agreementId].advanceConsumer =false;
+        }
+    }
+    function checkpointProvider(uint64 _agreementId) function public{
+        require(msg.sender==idToAgreement[_agreementId].provider);
+        idToAgreement[_agreementId].advanceProvider =true;
+        if(idToAgreement[_agreementId].advanceBuyer){
+            idToAgreement[_agreementId].checkpoint++;
+            idToAgreement[_agreementId].advanceBuyer =false;
+            idToAgreement[_agreementId].advanceConsumer =false;
+        }
+    }
+
+    function getAgreementStatus(uint64 _agreementId) function public view return (uint8){
+        return idToAgreement[_agreementId].checkpoint;
     }
 
     function getContractBalance() public view returns (uint256) {
