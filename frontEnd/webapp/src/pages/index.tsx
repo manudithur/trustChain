@@ -129,7 +129,7 @@ export function HeroImageRight() {
             </Title>
 
             <Text className={classes.description} mt={30}>
-              Built in blockchain technology in order to provide security and transparency.
+            Ensuring transparency and efficiency in cargo transactions with blockchain technology. Say goodbye to payment disputes and fraud with our fully secure payment method.
             </Text>
 
             <Button
@@ -194,19 +194,31 @@ export function FeaturesCards() {
   ));
 
   return (
-    <Container size="lg" pt="xl" pb={70}>
+    <Container size="lg" pt={80} pb={70}>
       <Group position="center">
-        <Badge variant="filled" size="lg" p={30}>
-        <Title>
-            Use Cases
-        </Title>
-        </Badge>
+        <FancyTitle></FancyTitle>
       </Group>
 
       <SimpleGrid cols={3} spacing="xl" mt={50} breakpoints={[{ maxWidth: 'md', cols: 1 }]}>
         {features}
       </SimpleGrid>
     </Container>
+  );
+}
+
+function FancyTitle() {
+  return (
+    <Title order={1} style={{ position: 'relative' }}>
+      <Text
+                component="span"
+                inherit
+                underline
+                variant="gradient"
+                gradient={{ from: 'pink', to: 'yellow' }}
+      >
+        Our Solution in Action
+      </Text>
+    </Title>
   );
 }
 
