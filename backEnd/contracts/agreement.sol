@@ -14,6 +14,7 @@ contract Agreement {
 
     mapping (uint64 => Agreement) private idToAgreement;
     mapping (address => uint64[]) private addressToIds;
+
     function createAgreement(uint256 _balance) public returns (uint64) {
         uint64 agreementId = _agreementCounter++;
         addressToIds[msg.sender].push(agreementId);
@@ -34,8 +35,15 @@ contract Agreement {
     function isPaid(uint64 _agreementId) public view returns(bool){
         return idToAgreement[_agreementId].paid;
     }
+
     function getAgreements() public view returns(uint64 [] memory){
         return addressToIds[msg.sender];
+    }
+
+    function claim(uint64 _agreementId) public {
+        require(idToAgreement[_agreementId].buyer == msg.sender);
+        require(idToAgreement[_agreementId].canClaim);
+        idToAgreement[_agreementId].buyer.transfer(idToAgreement[_agreementId].balance);
     }
 
 }
