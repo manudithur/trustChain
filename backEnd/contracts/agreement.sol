@@ -15,6 +15,7 @@ contract AgreementContract {
         bool paid;
         bool advanceProvider;
         bool advanceBuyer;
+        bool disputable;
     }
 
     mapping (uint64 => Agreement) private idToAgreement;
@@ -29,6 +30,7 @@ contract AgreementContract {
         idToAgreement[agreementId].paid = false;
         idToAgreement[agreementId].advanceBuyer =false;
         idToAgreement[agreementId].advanceProvider=false;
+        idTOAgreement[agreementId].disputable = true;
         idToAgreement[agreementId].checkpoint=0;
 
         return agreementId;
@@ -79,7 +81,14 @@ contract AgreementContract {
         // }
     }
 
-    function checkpointBuyer(uint64 _agreementId) function public{
+    function dispute(uint64 _agreementId) public {
+        require(msg.sender == idToAgreement[_agreementId].buyer || msg.sender == idToAgreement[_agreementId].provider);
+        idToAgreement[_agreementId].disputable = false;
+        //DISPUTE WITH ARBITRATOR
+
+    }
+
+    function checkpointBuyer(uint64 _agreementId) public{
         require(msg.sender==idToAgreement[_agreementId].buyer);
         idToAgreement[_agreementId].advanceBuyer =true;
         if(idToAgreement[_agreementId].advanceProvider){
@@ -88,7 +97,9 @@ contract AgreementContract {
             idToAgreement[_agreementId].advanceConsumer =false;
         }
     }
-    function checkpointProvider(uint64 _agreementId) function public{
+
+    
+    function checkpointProvider(uint64 _agreementId) public{
         require(msg.sender==idToAgreement[_agreementId].provider);
         idToAgreement[_agreementId].advanceProvider =true;
         if(idToAgreement[_agreementId].advanceBuyer){
@@ -98,7 +109,7 @@ contract AgreementContract {
         }
     }
 
-    function getAgreementStatus(uint64 _agreementId) function public view return (uint8){
+    function getAgreementStatus(uint64 _agreementId) public view return (uint8){
         return idToAgreement[_agreementId].checkpoint;
     }
 
