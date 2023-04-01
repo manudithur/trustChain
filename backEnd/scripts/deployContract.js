@@ -2,7 +2,7 @@ const { ethers } = require("hardhat");
 
 
 async function deployContract() {
-    const ExampleNFT = await ethers.getContractFactory("Agreement") 
+    const ExampleNFT = await ethers.getContractFactory("AgreementContract") 
     const exampleNFT = await ExampleNFT.deploy()
     await exampleNFT.deployed()
     const txHash = exampleNFT.deployTransaction.hash

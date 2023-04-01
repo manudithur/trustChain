@@ -1,6 +1,7 @@
 pragma solidity ^0.8.9;
+import "@openzeppelin/contracts/utils/Address.sol";
 
-contract Agreement {
+contract AgreementContract {
 
     uint64 _agreementCounter = 0;
 
@@ -45,9 +46,11 @@ contract Agreement {
     }
 
     function claim(uint64 _agreementId) public {
+        mediate(_agreementId);
         require(idToAgreement[_agreementId].provider == msg.sender);
         require(idToAgreement[_agreementId].canClaim);
-        idToAgreement[_agreementId].provider.transfer(idToAgreement[_agreementId].balance);
+        Address.sendValue(payable(msg.sender), idToAgreement[_agreementId].balance);
+        //idToAgreement[_agreementId].provider.transfer(idToAgreement[_agreementId].balance);
     }
 
     //returns 0 when ok
@@ -57,14 +60,19 @@ contract Agreement {
         return 0;
     }
 
-    function mediate(){
+    function mediate(uint64 _agreementId) public{
         if(oracle() == 0){
             idToAgreement[_agreementId].canClaim = true;
-        }elif(oracle() == 1){
-            idToAgreement[_agreementId].buyer.transfer(idToAgreement[_agreementId].balance);
-        }else {
-            idToAgreement[_agreementId].provider.transfer(idToAgreement[_agreementId].balance);
         }
+        // }else if(oracle() == 1){
+        //     idToAgreement[_agreementId].buyer.transfer(idToAgreement[_agreementId].balance);
+        // }else {
+        //     idToAgreement[_agreementId].provider.transfer(idToAgreement[_agreementId].balance);
+        // }
+    }
+
+    function getContractBalance() public view returns (uint256) {
+         return address(this).balance;
     }
 
 }
