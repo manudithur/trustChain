@@ -1,6 +1,5 @@
 import { createStyles, Container, Title, Text, Button, rem } from '@mantine/core';
-import Web3 from 'web3';
-import React, { Component } from 'react';
+import React from 'react';
 import { api } from './_app';
 declare global {
   interface Window {
@@ -132,7 +131,7 @@ export function HeroImageRight() {
             Ensuring transparency and efficiency in cargo transactions with blockchain technology. Say goodbye to payment disputes and fraud with our fully secure payment method.
             </Text>
 
-            <Button
+            {/* <Button
               variant="gradient"
               gradient={{ from: 'pink', to: 'yellow' }}
               size="xl"
@@ -141,7 +140,7 @@ export function HeroImageRight() {
               onClick={api}
             >
               Connect Wallet
-            </Button>
+            </Button> */}
           </div>
         </div>
       </Container>

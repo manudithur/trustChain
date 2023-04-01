@@ -1,7 +1,7 @@
 import '@/styles/globals.css'
 import type { AppProps } from 'next/app'
 import Head from 'next/head';
-import { MantineProvider } from '@mantine/core';
+import { MantineProvider, Title } from '@mantine/core';
 import '../styles/globals.css'
 import {
   createStyles,
@@ -14,6 +14,7 @@ import {
 } from '@mantine/core';
 import { MantineLogo } from '@mantine/ds';
 import { useDisclosure } from '@mantine/hooks';
+import { useState } from 'react';
 
 const useStyles = createStyles((theme) => ({
   link: {
@@ -74,10 +75,13 @@ const useStyles = createStyles((theme) => ({
     },
   },
 }));
-export  async function api(){
-  
+
+
+export async function api(){
+
   
   if (window.ethereum) {
+    var add;
     try {
       // Solicitar la cuenta del usuario de Metamask
       await window.ethereum.request({ method: 'eth_requestAccounts' });
@@ -85,8 +89,11 @@ export  async function api(){
       // Obtener la dirección de la billetera del usuario
       const accounts = await window.ethereum.request({ method: 'eth_accounts' });
       console.log(accounts[0]);
+      add = accounts[0];
     } catch (error) {
       console.log(error);
+    } finally{
+      return add;
     }
   } else {
     console.log('Metamask no detectado');
@@ -96,56 +103,51 @@ export  async function api(){
 export function HeaderMegaMenu() {
   const [drawerOpened, { toggle: toggleDrawer }] = useDisclosure(false);
   const { classes } = useStyles();
+  const [address, setAddress] = useState('Connect Wallet');
 
+
+  async function apiManager(){
+    const add = await api();
+    setAddress(add)
+    localStorage.setItem('address', add)
+  }
+  
   return (
-    <Box pb={0}>
+    <div style={{ position: "fixed", top: 0, width: "100%", zIndex: 1 }}>
+      <Box pb={0}>
       <Header height={60} px="md">
         <Group position="apart" sx={{ height: '100%' }}>
           <MantineLogo size={30} />
 
-          {/* <Group sx={{ height: '100%' }} spacing={0} className={classes.hiddenMobile}>
-            <a href="#" className={classes.link}>
-              Tag 1
-            </a>
-            <a href="#" className={classes.link}>
-              Tag 2
-            </a>
-            <a href="#" className={classes.link}>
-              Tag 3
-            </a>
-          </Group> */}
-
           <Group className={classes.hiddenMobile}>
-            <Button onClick={api}>
-              Connect Wallet
+            <Button onClick={apiManager} >
+              {address}
             </Button>
           </Group>
 
           <Burger opened={drawerOpened} onClick={toggleDrawer} className={classes.hiddenDesktop} />
         </Group>
       </Header>
-
     </Box>
+    </div>
   );
 }
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
     <>
-    <Head>
-      <title>Trust Chain</title>
-      <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />
-    </Head>
-      <HeaderMegaMenu></HeaderMegaMenu>
-      <MantineProvider
-        withGlobalStyles
-        withNormalizeCSS
-        theme={{
-          colorScheme: 'light', 
-        }}
-      >
-      <Component {...pageProps} />
-      </MantineProvider>
-  </>
-  )
+      <Head>
+        <title>Trust Chain</title>
+        <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />
+      </Head>
+        <HeaderMegaMenu/>
+          <MantineProvider
+            withGlobalStyles
+            withNormalizeCSS
+            theme={{ colorScheme: 'light' }}
+          >
+            <Component {...pageProps} />
+          </MantineProvider>
+    </>
+  );
 }
