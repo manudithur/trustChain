@@ -1,5 +1,12 @@
 import { createStyles, Container, Title, Text, Button, rem } from '@mantine/core';
-
+import Web3 from 'web3';
+import React, { Component } from 'react';
+import { api } from './_app';
+declare global {
+  interface Window {
+    ethereum?: any;
+  }
+}
 const useStyles = createStyles((theme) => ({
   root: {
     backgroundColor: '#11284b',
@@ -100,6 +107,8 @@ const useStyles = createStyles((theme) => ({
 }));
 
 export function HeroImageRight() {
+  
+
   const { classes } = useStyles();
   return (
     <div className={classes.root}>
@@ -129,6 +138,7 @@ export function HeroImageRight() {
               size="xl"
               className={classes.control}
               mt={40}
+              onClick={api}
             >
               Connect Wallet
             </Button>
@@ -170,6 +180,7 @@ const mockdata = [
 
 export function FeaturesCards() {
   const { classes, theme } = useStyles();
+ 
   const features = mockdata.map((feature) => (
     <Card key={feature.title} shadow="md" radius="md" className={classes.card} padding="xl">
       <feature.icon size={rem(50)} stroke={2} color={theme.fn.primaryColor()} />
