@@ -58,7 +58,7 @@ contract Arbitrator is IArbitrator {
         ruling = disputes[_disputeID].ruling;
     }
 
-    function rule(uint256 _disputeID, uint256 _ruling) public {
+    function rule(uint256 _disputeID, uint256 _ruling) public {// 0 initial  1: buyer wins 2:provider wins
         if (msg.sender != owner) {
             revert NotOwner();
         }
