@@ -1,7 +1,7 @@
 import '@/styles/globals.css'
 import type { AppProps } from 'next/app'
 import Head from 'next/head';
-import { MantineProvider, Title } from '@mantine/core';
+import { MantineProvider, Title} from '@mantine/core';
 import '../styles/globals.css'
 import {
   createStyles,
@@ -11,11 +11,11 @@ import {
   Box,
   Burger,
   rem,
+  Image
 } from '@mantine/core';
-import { MantineLogo } from '@mantine/ds';
 import { useDisclosure } from '@mantine/hooks';
-import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router'
+import { IconShip } from '@tabler/icons-react';
 
 
 
@@ -109,6 +109,7 @@ type HeaderMegaMenuProps = {
   fun: () => void;
 };
 
+import MyLogo from '../../public/logo.jpg';
 
 export function HeaderMegaMenu( {label, fun, address }: HeaderMegaMenuProps) {
   const [drawerOpened, { toggle: toggleDrawer }] = useDisclosure(false);
@@ -117,22 +118,32 @@ export function HeaderMegaMenu( {label, fun, address }: HeaderMegaMenuProps) {
   function route(){
     router.push("/createAgreement")
   }
+  function route2(){
+    router.push("/status")
+  }
   
   return (
     <div style={{ position: "fixed", top: 0, width: "100%", zIndex: 1 }}>
       <Box pb={0}>
       <Header height={60} px="md">
         <Group position="apart" sx={{ height: '100%' }}>
-          <MantineLogo size={30} />
+        <div style={{textAlign: "center", display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+          <Image withPlaceholder maw={240} height={50} mx="50" radius="md" src="../../logo.png" alt="Random image" />
+        </div>
 
           <Group className={classes.hiddenMobile}>
             {address?(
             <Button onClick={fun} >
               {label}
             </Button>
-            ):( <Button onClick={route} >
-              Create agreement
-            </Button>)
+            ):( <div>
+                  <Button onClick={route} >
+                    Create agreement
+                  </Button>
+                  <Button onClick={route2} mx={10} >
+                    Statuses
+                  </Button>
+              </div>)
             }
           </Group>
 
