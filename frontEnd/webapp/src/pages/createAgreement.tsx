@@ -3,11 +3,7 @@ import React from 'react';
 
 const useStyles = createStyles((theme) => ({
   root: {
-    backgroundColor: '#11284b',
     backgroundSize: 'cover',
-    backgroundPosition: 'center',
-    backgroundImage:
-      'linear-gradient(250deg, rgba(130, 201, 30, 0) 0%, #062343 70%), url(https://xmple.com/wallpaper/black-blue-gradient-linear-3840x2160-c2-000000-0000cd-a-105-f-14.svg)',
     paddingTop: `calc(${theme.spacing.xl} * 3)`,
     paddingBottom: `calc(${theme.spacing.xl} * 3)`,
 
@@ -229,8 +225,8 @@ export function DropzoneButton() {
 
   return (
     <div style={{alignContent: 'center', height: "100vh"}}>
-    <TextInput mx={100} label="Buyer Wallet" placeholder={buyerAddres} onChange={(e: React.FormEvent<HTMLInputElement>) =>{setBuyerAddres(e.currentTarget.value)}} labelProps={{ style: { color: 'white' } }}/>
-    <TextInput mx={100} mt={'sm'} label="Agreement Amount" placeholder="0" onChange={(e: React.FormEvent<HTMLInputElement>) =>{setAgreementAmount(e.currentTarget.value)}} rightSection={<TextInput variant="unstyled" size="xs" value="ETH" readOnly />} labelProps={{ style: { color: 'white' } }}/>   
+    <TextInput mx={100} label="Buyer Wallet" placeholder={buyerAddres} onChange={(e: React.FormEvent<HTMLInputElement>) =>{setBuyerAddres(e.currentTarget.value)}} labelProps={{ style: { color: 'Black' } }}/>
+    <TextInput mx={100} mt={'sm'} label="Agreement Amount" placeholder="0" onChange={(e: React.FormEvent<HTMLInputElement>) =>{setAgreementAmount(e.currentTarget.value)}} rightSection={<TextInput variant="unstyled" size="xs" value="ETH" readOnly />} labelProps={{ style: { color: 'black' } }}/>   
     <div className={classes.wrapper} style={{marginLeft: 300, marginRight: 300, marginTop: 50}}>
       <Dropzone
         openRef={openRef}
@@ -282,9 +278,10 @@ export function DropzoneButton() {
               variant="gradient"
               gradient={{ from: 'pink', to: 'yellow' }}
               size="xl"
+              ml={43}
               className={classes.control}
               onClick={createAgreement}
-              mt={40}
+              mt={60}
             >
               Create Agreement
       </Button>
