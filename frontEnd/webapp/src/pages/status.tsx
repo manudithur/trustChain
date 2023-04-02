@@ -146,15 +146,9 @@ interface Agreement {
           setArray(toRet);
     }
   
-    function test() {
-      console.log(JSON.stringify(array));
-    }
   
     return (
       <div style={{ overflow: "hidden" }}>
-        <Button pt={120} onClick={test}>
-          sdlkfjalk
-        </Button>
         <Grid
           pt={100}
           grow
