@@ -66,7 +66,7 @@ contract AgreementContract is Ownable{
 
     function signAgreement(uint64 _agreementId) public payable{
         // TODO revisar lo del hex:
-        require(msg.value == idToAgreement[_agreementId].balance );
+        require(msg.value >= idToAgreement[_agreementId].balance );
         idToAgreement[_agreementId].buyer = msg.sender;
         idToAgreement[_agreementId].paid = true;
     }
