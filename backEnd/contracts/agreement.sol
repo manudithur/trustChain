@@ -1,10 +1,11 @@
 pragma solidity ^0.8.9;
 import "@openzeppelin/contracts/utils/Address.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/finance/PaymentSplitter.sol";
 
 import "./IArbitrator.sol";
 
-contract AgreementContract{
+contract AgreementContract is Ownable{
 
     uint64 _agreementCounter = 0;
 
@@ -50,7 +51,7 @@ contract AgreementContract{
         idToAgreement[agreementId].paid = false;
         idToAgreement[agreementId].advanceBuyer =false;
         idToAgreement[agreementId].advanceProvider=false;
-        idTOAgreement[agreementId].disputable = true;
+        idToAgreement[agreementId].disputable = true;
         idToAgreement[agreementId].checkpoint=0;
         idToAgreement[agreementId].status = Status.Initial;
         idToAgreement[agreementId].ruling = RulingOptions.Initial;
@@ -75,6 +76,10 @@ contract AgreementContract{
 
     function getAgreements() public view returns(uint64 [] memory){
         return addressToIds[msg.sender];
+    }
+
+    function getAgreement(uint64 _agreementId) public view returns(Agreement memory){
+        return idToAgreement[_agreementId];
     }
 
     function getBalance(uint64 _agreementId) public view returns(uint256){
@@ -112,7 +117,7 @@ contract AgreementContract{
         } else{
             uint256 arbitrationCost = arbitrator.arbitrationCost("");
             require(msg.value >= arbitrationCost, "Not enough ETH to cover arbitration costs.");
-            uint265 disputeID = arbitrator.createDispute{value: msg.value}(2, "", idToAgreement[_agreementId].cid);
+            uint256 disputeID = arbitrator.createDispute{value: msg.value}(2, "", idToAgreement[_agreementId].cid);
             disputeToAgreement[disputeID] = _agreementId;
             idToAgreement[_agreementId].status = Status.Disputed;
         }
@@ -121,9 +126,9 @@ contract AgreementContract{
     function rule(uint256 disputeID, uint256 _ruling) public{
         require(msg.sender == address(arbitrator));
 
-        uint64 = id = disputeToAgreement[disputeID];
+        uint64 id = disputeToAgreement[disputeID];
 
-        require(idToAgreement[id].status == Status.disputed);
+        require(idToAgreement[id].status == Status.Disputed);
 
         if(_ruling == 1){
             idToAgreement[id].ruling = RulingOptions.PayerWins;
@@ -139,7 +144,7 @@ contract AgreementContract{
         if(idToAgreement[_agreementId].advanceProvider){
             idToAgreement[_agreementId].checkpoint++;
             idToAgreement[_agreementId].advanceBuyer =false;
-            idToAgreement[_agreementId].advanceConsumer =false;
+            idToAgreement[_agreementId].advanceProvider =false;
         }
     }
 
@@ -150,11 +155,11 @@ contract AgreementContract{
         if(idToAgreement[_agreementId].advanceBuyer){
             idToAgreement[_agreementId].checkpoint++;
             idToAgreement[_agreementId].advanceBuyer =false;
-            idToAgreement[_agreementId].advanceConsumer =false;
+            idToAgreement[_agreementId].advanceProvider =false;
         }
     }
 
-    function getAgreementStatus(uint64 _agreementId) public view return (uint8){
+    function getAgreementStatus(uint64 _agreementId) public view returns (uint8){
         return idToAgreement[_agreementId].checkpoint;
     }
 
