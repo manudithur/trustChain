@@ -162,19 +162,19 @@ const mockdata = [
   {
     title: 'Transparency',
     description:
-      'This dust is actually a powerful poison that will even make a pro wrestler sick, Regice cloaks itself with frigid air of -328 degrees Fahrenheit',
+      'Our solution offers transparency in international exchange transactions. All information is decentralized and available to everyone.',
     icon: IconGauge,
   },
   {
-    title: 'Privacy',
+    title: 'Swiftness',
     description:
-      'People say it can run at the same speed as lightning striking, Its icy body is so cold, it will not melt even if it is immersed in magma',
+      'web3 Operations are almost instant, reducing paperwork and middle men involved in the transaction.',
     icon: IconUser,
   },
   {
     title: 'Security',
     description:
-      'They’re popular, but they’re rare. Trainers who show them off recklessly may be targeted by thieves',
+      'Our platform is a secure alternative to traditional and arcaic payment methods. It reduces the risk of transactions and provides with useful evidence to solve disputes swiftly and with a low cost.',
     icon: IconCookie,
   },
 ];
