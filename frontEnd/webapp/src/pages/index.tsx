@@ -156,26 +156,26 @@ import {
   Card,
   SimpleGrid
 } from '@mantine/core';
-import { IconGauge, IconUser, IconCookie } from '@tabler/icons-react';
+import { IconGauge, IconUser, IconCookie, IconLock, IconFile } from '@tabler/icons-react';
 
 const mockdata = [
   {
     title: 'Transparency',
     description:
       'Our solution offers transparency in international exchange transactions. All information is decentralized and available to everyone.',
-    icon: IconGauge,
+    icon: IconFile,
   },
   {
     title: 'Swiftness',
     description:
-      'web3 Operations are almost instant, reducing paperwork and middle men involved in the transaction.',
+      'Web3 operations are almost instant, reducing paperwork and middle men involved in the transaction.',
     icon: IconUser,
   },
   {
     title: 'Security',
     description:
-      'Our platform is a secure alternative to traditional and arcaic payment methods. It reduces the risk of transactions and provides with useful evidence to solve disputes swiftly and with a low cost.',
-    icon: IconCookie,
+      'Our platform is a secure alternative to traditional and arcaic payment methods. It reduces the risk of transactions and provides with Kleros decentralized arbitration technology to resolve disputes.',
+    icon: IconLock,
   },
 ];
 
@@ -217,7 +217,7 @@ function FancyTitle() {
                 variant="gradient"
                 gradient={{ from: 'pink', to: 'yellow' }}
       >
-        Our Solution in Action
+        Why to choose PayPort
       </Text>
     </Title>
   );

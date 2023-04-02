@@ -1,4 +1,4 @@
-import { createStyles, Container, Title, Text, Button, rem } from '@mantine/core';
+import { createStyles, Container, Title, Text, Button, rem, FileInput } from '@mantine/core';
 import React from 'react';
 
 const useStyles = createStyles((theme) => ({
@@ -239,56 +239,19 @@ export function DropzoneButton() {
 
   return (
     <div style={{alignContent: 'center', height: "100vh"}}>
-      <TextInput mx={100} mt={'sm'} label="Agreement Amount" placeholder="0" onChange={(e: React.FormEvent<HTMLInputElement>) =>{setAgreementAmount(e.currentTarget.value)}} rightSection={<TextInput variant="unstyled" size="xs" value="ETH" readOnly />} labelProps={{ style: { color: 'black' } }}/>   
+      <TextInput withAsterisk mx={100} mt={'sm'} label="Agreement Amount" placeholder="0" onChange={(e: React.FormEvent<HTMLInputElement>) =>{setAgreementAmount(e.currentTarget.value)}} rightSection={<TextInput variant="unstyled" size="xs" value="ETH" readOnly />} labelProps={{ style: { color: 'black' } }}/>  
+      <FileInput
+        mx={100}
+        mt={'sm'}
+        placeholder="Pick file"
+        label="Agreement File"
+        withAsterisk
+      /> 
     <div className={classes.wrapper} style={{marginLeft: 300, marginRight: 300, marginTop: 50}}>
-      <Dropzone
-        openRef={openRef}
-        onDrop={changeHandler}
-        className={classes.dropzone}
-        radius="md"
-        accept={[MIME_TYPES.pdf]}
-        maxSize={30 * 1024 ** 2}
-      >
-        <div style={{ pointerEvents: 'none' }}>
-          <Group position="center">
-            <Dropzone.Accept>
-              <IconDownload
-                size={rem(50)}
-                color={theme.colors[theme.primaryColor][6]}
-                stroke={1.5}
-              />
-            </Dropzone.Accept>
-            <Dropzone.Reject>
-              <IconX size={rem(50)} color={theme.colors.red[6]} stroke={1.5} />
-            </Dropzone.Reject>
-            <Dropzone.Idle>
-              <IconCloudUpload
-                size={rem(50)}
-                color={theme.colorScheme === 'dark' ? theme.colors.dark[0] : theme.black}
-                stroke={1.5}
-              />
-            </Dropzone.Idle>
-          </Group>
-
-          <Text ta="center" fw={700} fz="lg" mt="xl">
-            <Dropzone.Accept>Drop Agreement Here</Dropzone.Accept>
-            <Dropzone.Reject>Pdf file less than 30mb</Dropzone.Reject>
-            <Dropzone.Idle>Upload Agreement File</Dropzone.Idle>
-          </Text>
-          <Text ta="center" fz="sm" mt="xs" c="dimmed">
-            Drag&apos;n&apos;drop files here to upload. We can accept only <i>.pdf</i> files that
-            are less than 30mb in size.
-          </Text>
-          <Button className={classes.control2} variant="gradient" gradient={{ from: 'pink', to: 'yellow' }} size="sm" radius="md" onClick={() => openRef.current?.()}>
-        Select files
-      </Button>
-        </div>
-       
-      </Dropzone>
       <LoadingOverlay visible={visible} overlayBlur={2} />
 
       <Modal opened={opened} onClose={close} title="Accept agreement link" centered>
-        {<p>localhost:3000/accept?id={id}</p>}
+        {<p >Send this link to the payer in order to pay the agreement <a href={"localhost:3000/accept?id={id}"}>localhost:3000/accept?id={id}</a></p>}
       </Modal>
      
       <Button
@@ -301,7 +264,7 @@ export function DropzoneButton() {
                 createAgreement()
                 setVisible(true)
               }}
-              mt={60}
+              mt={30}
             >
               Create Agreement
       </Button>

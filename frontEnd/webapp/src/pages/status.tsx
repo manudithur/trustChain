@@ -21,11 +21,11 @@ function ListItem({ title, colorNum }: ListItemProps) {
     //2 Llego
     //3 Recibio
     var color = 'white';
-    var label = 'no status'
+    var label = 'Not Accepted'
     switch(colorNum){
         case 1: {
-            color = 'yellow'
-            label = 'Shipped'
+            color = 'green'
+            label = 'Accepted'
         };
         case 2: {
             color = 'cyan'
@@ -55,37 +55,6 @@ function MyList({ values }: { values: Array<Agreement> }) {
         ))}
         </List>
     );
-}
-
-async function getIds(){
-    await window.ethereum.request({
-        method: 'wallet_switchEthereumChain',
-        params: [{ chainId: "0x13881" }],
-         // '0x3830303031'
-    });
-  
-    const accounts = await window.ethereum.request({ method: 'eth_accounts' });
-  // step 2 - Initialize your contract
-  
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const yourSignedContractObject = new ethers.Contract(
-        contractAddress.address, 
-        smartContract.abi,
-        provider.getSigner(0)
-    );
-
-    const web3 = new Web3(window.ethereum);
-        
-    var myContractInstance = new web3.eth.Contract(smartContract.abi as any, contractAddress.address);
-    // step 3 - Submit transaction to metamask
-    var arr;
-    var aux = await myContractInstance.methods.getAgreements().call({from: web3.utils.toChecksumAddress(accounts[0])}).then(function fun (res : any){
-        //console.log(res);
-        arr = res
-        console.log("Arr  " + arr)
-        return res;
-    })
-    return aux;
 }
 
   
@@ -139,7 +108,7 @@ interface Agreement {
             const id = res[i];
             const resp = await myContractInstance.methods
               .getAgreementStatus(id)
-              .call({ from: web3.utils.toChecksumAddress(accounts[0]) });
+              .call({ from: web3.utils.toChecksumAddress(accounts[0]) })
             toRet.push({ id: id, status: resp });
           }
         
