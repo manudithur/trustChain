@@ -1,5 +1,9 @@
-import { Badge, Card, Divider, Grid, List, Title, createStyles } from "@mantine/core";
-import { title } from "process";
+import { Badge, Button, Card, Divider, Grid, List, Title, createStyles } from "@mantine/core";
+import smartContract from '../smartContract/AgreementContract.json';
+import contractAddress from '../smartContract/conctractAddress.json';
+import { ethers } from 'ethers';
+import Web3 from 'web3';
+import { useEffect, useState } from "react";
 
 type ListItemProps = {
     title: string,
@@ -9,10 +13,6 @@ type ListItemProps = {
 type statusVar = {
     id: string,
     status: number
-}
-
-type statusArray = {
-    values: Array<statusVar>
 }
 
 function ListItem({ title, colorNum }: ListItemProps) {
@@ -47,38 +47,146 @@ function ListItem({ title, colorNum }: ListItemProps) {
     );
   }
   
-  function MyList({ values }: { values: Array<statusVar> }) {
+function MyList({ values }: { values: Array<Agreement> }) {
     return (
-      <List>
+        <List>
         {values.map((item) => (
-          <ListItem key={item.id} title={item.id} colorNum={item.status}/>
+            <ListItem key={item.id} title={item.id} colorNum={Number(item.status)}/>
         ))}
-      </List>
+        </List>
     );
+}
+
+async function getIds(){
+    await window.ethereum.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: "0x13881" }],
+         // '0x3830303031'
+    });
+  
+    const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+  // step 2 - Initialize your contract
+  
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const yourSignedContractObject = new ethers.Contract(
+        contractAddress.address, 
+        smartContract.abi,
+        provider.getSigner(0)
+    );
+
+    const web3 = new Web3(window.ethereum);
+        
+    var myContractInstance = new web3.eth.Contract(smartContract.abi as any, contractAddress.address);
+    // step 3 - Submit transaction to metamask
+    var arr;
+    var aux = await myContractInstance.methods.getAgreements().call({from: web3.utils.toChecksumAddress(accounts[0])}).then(function fun (res : any){
+        //console.log(res);
+        arr = res
+        console.log("Arr  " + arr)
+        return res;
+    })
+    return aux;
+}
+
+  
+interface Agreement {
+    id: string;
+    status: string;
   }
   
+  export default function Status() {
+    const [array, setArray] = useState<Agreement[]>([]);
+  
+    useEffect(() => {
+      // This function will be executed on render
+      getIds();
+    }, []);
+  
+    useEffect(() => {
+      console.log("Recibi" + JSON.stringify(array));
+    }, [array]);
+  
+    async function getIds() {
+      await window.ethereum.request({
+        method: "wallet_switchEthereumChain",
+        params: [{ chainId: "0x13881" }],
+      });
+  
+      const accounts = await window.ethereum.request({
+        method: "eth_accounts",
+      });
+  
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const yourSignedContractObject = new ethers.Contract(
+        contractAddress.address,
+        smartContract.abi,
+        provider.getSigner(0)
+      );
+  
+      const web3 = new Web3(window.ethereum);
+  
+      var myContractInstance = new web3.eth.Contract(
+        smartContract.abi as any,
+        contractAddress.address
+      );
+  
+      var toRet: Agreement[] = [];
+      var res = await myContractInstance.methods
+        .getAgreements()
+        .call({ from: web3.utils.toChecksumAddress(accounts[0]) });
 
-export default function status() {
-    const s1: statusVar = { id: "1234", status: 0 };
-    const s2: statusVar = { id: "12345", status: 1 };
-    const s3: statusVar = { id: "12345", status: 1 };
-    const s4: statusVar = { id: "12345", status: 1 };
-    const s5: statusVar = { id: "12345", status: 1 };
-    const array: Array<statusVar> = [s1, s2, s3, s4, s5];
+        for (let i = 0; i < res.length; i++) {
+            const id = res[i];
+            const resp = await myContractInstance.methods
+              .getAgreementStatus(id)
+              .call({ from: web3.utils.toChecksumAddress(accounts[0]) });
+            toRet.push({ id: id, status: resp });
+          }
+        
+          setArray(toRet);
+    }
+  
+    function test() {
+      console.log(JSON.stringify(array));
+    }
+  
     return (
-      <div style={{overflow : 'hidden'}}>
-        <Grid pt={100} grow style={{height: '100vh', overflowY: "hidden"}}>
-            <Grid.Col span={4}/>
-            <Grid.Col span={4}>
-                <Title size={20}>Your agreement statuses</Title>
-                <Card mt={30} style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '2px solid #ccc'}}>
-                    <div>Agreement ID</div>
-                    <div style={{ borderRadius: '12px', padding: '4px 8px' }}>Status</div>
-                </Card>
-                <MyList values={array} />
-            </Grid.Col>
-            <Grid.Col span={4}/>
+      <div style={{ overflow: "hidden" }}>
+        <Button pt={120} onClick={test}>
+          sdlkfjalk
+        </Button>
+        <Grid
+          pt={100}
+          grow
+          style={{ height: "100vh", overflowY: "hidden" }}
+        >
+          <Grid.Col span={4} />
+          <Grid.Col span={4}>
+            <Title size={20}>Your agreement statuses</Title>
+            <Card
+              mt={30}
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                borderBottom: "2px solid #ccc",
+              }}
+            >
+              <div>Agreement ID</div>
+              <div
+                style={{ borderRadius: "12px", padding: "4px 8px" }}
+              >
+                Status
+              </div>
+            </Card>
+            <MyList values={array}></MyList>
+          </Grid.Col>
+          <Grid.Col span={4} />
         </Grid>
       </div>
     );
   }
+  
+  
+  
+  
+  
