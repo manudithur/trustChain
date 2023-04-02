@@ -1,6 +1,8 @@
 import { createStyles, Container, Title, Text, Button, rem } from '@mantine/core';
 import React from 'react';
 import { api } from './_app';
+
+
 declare global {
   interface Window {
     ethereum?: any;

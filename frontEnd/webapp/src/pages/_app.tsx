@@ -15,6 +15,9 @@ import {
 import { MantineLogo } from '@mantine/ds';
 import { useDisclosure } from '@mantine/hooks';
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/router'
+
+
 
 const useStyles = createStyles((theme) => ({
   link: {
@@ -102,14 +105,19 @@ export async function api(){
 
 type HeaderMegaMenuProps = {
   label: string;
+  address: boolean;
   fun: () => void;
 };
 
 
-export function HeaderMegaMenu( {label, fun }: HeaderMegaMenuProps) {
+export function HeaderMegaMenu( {label, fun, address }: HeaderMegaMenuProps) {
   const [drawerOpened, { toggle: toggleDrawer }] = useDisclosure(false);
   const { classes } = useStyles();
-
+  const router = useRouter();
+  function route(){
+    router.push("/createAgreement")
+  }
+  
   return (
     <div style={{ position: "fixed", top: 0, width: "100%", zIndex: 1 }}>
       <Box pb={0}>
@@ -118,9 +126,14 @@ export function HeaderMegaMenu( {label, fun }: HeaderMegaMenuProps) {
           <MantineLogo size={30} />
 
           <Group className={classes.hiddenMobile}>
+            {address?(
             <Button onClick={fun} >
               {label}
             </Button>
+            ):( <Button onClick={route} >
+              Create agreement
+            </Button>)
+            }
           </Group>
 
           <Burger opened={drawerOpened} onClick={toggleDrawer} className={classes.hiddenDesktop} />
@@ -135,15 +148,19 @@ import { useLocalStorage } from '@mantine/hooks';
 
 
 export default function App({ Component, pageProps }: AppProps) {
+  const router = useRouter();
 
   const [address, setAddress] = useLocalStorage<string>({
     key: "address",
     defaultValue: "Connect Wallet"
   }) 
+  
 
   async function apiManager() {
+
     const add = await api();
     setAddress(add);
+    router.push("/createAgreement")
   }
 
   return (
@@ -152,7 +169,8 @@ export default function App({ Component, pageProps }: AppProps) {
         <title>Trust Chain</title>
         <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />
       </Head>
-      <HeaderMegaMenu label={address} fun={apiManager} />
+
+      <HeaderMegaMenu label={"Connect wallet"} fun={apiManager} address={address == "Connect Wallet"} />
       <MantineProvider withGlobalStyles withNormalizeCSS theme={{ colorScheme: "light" }}>
         <Component {...pageProps} />
       </MantineProvider>
