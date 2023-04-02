@@ -54,7 +54,7 @@ interface IArbitrator {
      * @param _extraData Can be used to give additional info on the dispute to be created.
      * @return disputeID ID of the dispute created.
      */
-    function createDispute(uint256 _choices, bytes calldata _extraData, bytes memory agreementCID) external payable returns (uint256 disputeID);
+    function createDispute(uint256 _choices, bytes calldata _extraData) external payable returns (uint256 disputeID);
 
     /**
      * @dev Compute the cost of arbitration. It is recommended not to increase it often, as it can be highly time and gas consuming for the arbitrated contracts to cope with fee augmentation.

@@ -31,7 +31,7 @@ contract Arbitrator is IArbitrator {
         return 0.1 ether;
     }
 
-    function createDispute(uint256 _choices, bytes memory _extraData, bytes memory agreementCID)
+    function createDispute(uint256 _choices, bytes memory _extraData)
         public
         payable
         override

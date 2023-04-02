@@ -171,7 +171,12 @@ import { IconCloudUpload, IconX, IconDownload } from '@tabler/icons-react';
 import { useRouter } from 'next/router';
 import { useSessionStorage } from '@mantine/hooks';
 import {useState} from 'react';
+import smartContract from '../smartContract/AgreementContract.json';
+import contractAddress from '../smartContract/conctractAddress.json';
 import { ethers } from 'ethers';
+import Web3 from 'web3';
+import { AbiItem } from 'web3-utils'
+
 
 export function DropzoneButton() {
 
@@ -185,31 +190,38 @@ export function DropzoneButton() {
 	};
   const openRef = useRef<() => void>(null);
   const [buyerAddres, setBuyerAddres] =useState("");
-  const [agreementAmount, setAgreementAmount] = useState("");
+  const [agreementAmount, setAgreementAmount] = useState("0");
   
   const router = useRouter();
   
 
   async function  createAgreement(){
-    await window.ethereum.request({method: 'eth_requestAccounts'});
+    await window.ethereum.request({
+      method: 'wallet_switchEthereumChain',
+      params: [{ chainId: "0x13881" }],
+       // '0x3830303031'
+  });
 
+  const accounts = await window.ethereum.request({ method: 'eth_accounts' });
 // step 2 - Initialize your contract
 
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       const yourSignedContractObject = new ethers.Contract(
-      "contractAddress.Address", 
-      "smartContract.Abi",
+      contractAddress.address, 
+      smartContract.abi,
       provider.getSigner(0)
     );
 
-// step 3 - Submit transaction to metamask
-
-    const tx = await yourSignedContractObject.doVote("yourChoice")
-    console.log(buyerAddres);
-    console.log(agreementAmount);
-    console.log(selectedFile);
+    const web3 = new Web3(window.ethereum);
+         
+    var myContractInstance = new web3.eth.Contract(smartContract.abi as any, contractAddress.address);
+    // step 3 - Submit transaction to metamask
+    var aux = await myContractInstance.methods.getAgreements().send({
+           from: web3.utils.toChecksumAddress(accounts[0]), 
+           gas: 0x00, 
+           gasPrice: 0x00
+        })
   }
-
 
 
 

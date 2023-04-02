@@ -34,7 +34,7 @@ contract AgreementContract is Ownable{
         bool disputable;
         Status status;
         RulingOptions ruling;
-        bytes cid;
+        string cid;
     }
 
     IArbitrator public arbitrator;
@@ -49,6 +49,7 @@ contract AgreementContract is Ownable{
         idToAgreement[agreementId].provider = msg.sender;
         idToAgreement[agreementId].balance = _balance;
         idToAgreement[agreementId].paid = false;
+        idToAgreement[agreementId].cid = "";
         idToAgreement[agreementId].advanceBuyer =false;
         idToAgreement[agreementId].advanceProvider=false;
         idToAgreement[agreementId].disputable = true;
@@ -117,7 +118,7 @@ contract AgreementContract is Ownable{
         } else{
             uint256 arbitrationCost = arbitrator.arbitrationCost("");
             require(msg.value >= arbitrationCost, "Not enough ETH to cover arbitration costs.");
-            uint256 disputeID = arbitrator.createDispute{value: msg.value}(2, "", idToAgreement[_agreementId].cid);
+            uint256 disputeID = arbitrator.createDispute{value: msg.value}(2, "");
             disputeToAgreement[disputeID] = _agreementId;
             idToAgreement[_agreementId].status = Status.Disputed;
         }
