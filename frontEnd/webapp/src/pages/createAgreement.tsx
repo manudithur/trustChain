@@ -151,7 +151,7 @@ export function HeroImageRight() {
       <Container style={{ flex: 1 }}>
         <div className={classes.inner}>
           <div className={classes.content}>
-            <ContainedInputs></ContainedInputs>
+            <DropzoneButton></DropzoneButton>
           </div>
         </div>
       </Container>
@@ -162,43 +162,65 @@ export function HeroImageRight() {
 import { TextInput } from '@mantine/core';
 
 
-export function ContainedInputs() {
-  // You can add these classes as classNames to any Mantine input, it will work the same
-  const { classes } = useStyles();
 
-  return (
-    <div style={{alignContent: 'center', height: "100vh"}}>
-      <TextInput mx={100} label="Buyer Wallet" placeholder="0x000000000000000000000000000000000000dEaD" labelProps={{ style: { color: 'white' } }}/>
-      <TextInput mx={100} mt={'sm'} label="Agreement Amount" placeholder="0" rightSection={<TextInput variant="unstyled" size="xs" value="ETH" readOnly />} labelProps={{ style: { color: 'white' } }}/>
-      <DropzoneButton></DropzoneButton>
-      <Button
-              variant="gradient"
-              gradient={{ from: 'pink', to: 'yellow' }}
-              size="xl"
-              className={classes.control}
-              mt={40}
-            >
-              Create Agreement
-      </Button>
-    </div>
-  );
-}
 
 import { useRef } from 'react';
 import { Group} from '@mantine/core';
 import { Dropzone, MIME_TYPES } from '@mantine/dropzone';
 import { IconCloudUpload, IconX, IconDownload } from '@tabler/icons-react';
-
+import { useRouter } from 'next/router';
+import { useSessionStorage } from '@mantine/hooks';
+import {useState} from 'react';
+import { ethers } from 'ethers';
 
 export function DropzoneButton() {
+
   const { classes, theme } = useStyles();
+	const [selectedFile, setSelectedFile] = useState();
+  const [isFilePicked, setIsFilePicked] = useState(false);
+
+	const changeHandler = (event : any) => {
+		setSelectedFile(event);
+		setIsFilePicked(true);
+	};
   const openRef = useRef<() => void>(null);
+  const [buyerAddres, setBuyerAddres] =useState("");
+  const [agreementAmount, setAgreementAmount] = useState("");
+  
+  const router = useRouter();
+  
+
+  async function  createAgreement(){
+    await window.ethereum.request({method: 'eth_requestAccounts'});
+
+// step 2 - Initialize your contract
+
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const yourSignedContractObject = new ethers.Contract(
+      "contractAddress.Address", 
+      "smartContract.Abi",
+      provider.getSigner(0)
+    );
+
+// step 3 - Submit transaction to metamask
+
+    const tx = await yourSignedContractObject.doVote("yourChoice")
+    console.log(buyerAddres);
+    console.log(agreementAmount);
+    console.log(selectedFile);
+  }
+
+
+
 
   return (
+    <div style={{alignContent: 'center', height: "100vh"}}>
+    <TextInput mx={100} label="Buyer Wallet" placeholder={buyerAddres} onChange={(e: React.FormEvent<HTMLInputElement>) =>{setBuyerAddres(e.currentTarget.value)}} labelProps={{ style: { color: 'white' } }}/>
+    <TextInput mx={100} mt={'sm'} label="Agreement Amount" placeholder="0" onChange={(e: React.FormEvent<HTMLInputElement>) =>{setAgreementAmount(e.currentTarget.value)}} rightSection={<TextInput variant="unstyled" size="xs" value="ETH" readOnly />} labelProps={{ style: { color: 'white' } }}/>   
     <div className={classes.wrapper} style={{marginLeft: 300, marginRight: 300, marginTop: 50}}>
       <Dropzone
         openRef={openRef}
-        onDrop={() => {}}
+        onDrop={changeHandler}
         className={classes.dropzone}
         radius="md"
         accept={[MIME_TYPES.pdf]}
@@ -234,13 +256,27 @@ export function DropzoneButton() {
             Drag&apos;n&apos;drop files here to upload. We can accept only <i>.pdf</i> files that
             are less than 30mb in size.
           </Text>
-        </div>
-      </Dropzone>
-
-      <Button className={classes.control2} variant="gradient" gradient={{ from: 'pink', to: 'yellow' }} size="sm" radius="md" onClick={() => openRef.current?.()}>
+          <Button className={classes.control2} variant="gradient" gradient={{ from: 'pink', to: 'yellow' }} size="sm" radius="md" onClick={() => openRef.current?.()}>
         Select files
       </Button>
+        </div>
+       
+      </Dropzone>
+
+     
+      <Button
+              variant="gradient"
+              gradient={{ from: 'pink', to: 'yellow' }}
+              size="xl"
+              className={classes.control}
+              onClick={createAgreement}
+              mt={40}
+            >
+              Create Agreement
+      </Button>
     </div>
+    </div>
+
   );
 }
 
