@@ -33,7 +33,7 @@ function ListItem({ title, colorNum }: ListItemProps) {
         };
         case 3: {
             color = 'green'
-            label = 'Received'
+            label = 'Accepted'
         };
         default:{
 

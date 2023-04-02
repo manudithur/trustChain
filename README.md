@@ -1,13 +1,26 @@
 # PayPort
 
 Pasos para conectar Metamask a la testnet de Polygon  
--crear cuenta de Metamask  
--contar con un browser con la extension de Metamask  
--Visitar el sitio https://chainlist.org/ y buscar Polygon, tener el selector de testnet activada  
--Seleccionar Mumbai y dar a la opcion de agregar a Metamask  
+
+CREAR METAMASK:
+-Crear cuenta de Metamask  
+-Contar con un browser con la extension de Metamask  
+
+CONFIGURAR TEST NETWORK:
+-Visitar el sitio https://chainlist.org/chain/80001 y apretar "conectar wallet" y luego "add network"
+    -En el popup de metamask conectar la wallet y clicker "switch network"
+-Asegurarse de tener seleccionada la Mumbai network en su billetera
+
+CARGAR TOKENS EN SU WALLET
+-Abrir metamask y copiar su address de la billetera 
 -Visitar el sitio https://faucet.polygon.technology y obtener Tokens  
+-Todo listo del lado de metamask
   
-Pasos para correr el sitio:  
--Entrar en la carpeta frontend/webapp dentro del repositorio  
--Correr npm install --legacy-peer-deps  
--Correr el comando "npm run serve" para correr el sitio localmente  
+
+EJECUTAR EL SITIO WEB: 
+-Clonar el sitio en unix
+-Entrar en la carpeta frontEnd/webapp dentro del repositorio  (cd frontEnd/webapp)
+-Correr chmod u+x run.sh
+-Correr el comando ./run.sh
+-Entrar al localhost:3000 (o puerto especificado por la terminal)
+
