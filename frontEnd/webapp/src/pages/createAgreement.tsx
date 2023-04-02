@@ -216,15 +216,23 @@ export function DropzoneButton() {
          
     var myContractInstance = new web3.eth.Contract(smartContract.abi as any, contractAddress.address);
     // step 3 - Submit transaction to metamask
-    var res = await myContractInstance.methods.createAgreement(web3.utils.toWei(agreementAmount, 'ether')).call({
+    var res = await myContractInstance.methods.createAgreement(web3.utils.toWei(agreementAmount, 'ether')).send({
            from: web3.utils.toChecksumAddress(accounts[0]), 
            gas: 0x00, 
            gasPrice: 0x00
-        })
+        }).then((resp:any)=>
+        {
+           myContractInstance.methods
+              .getAgreements()
+              .call({ from: web3.utils.toChecksumAddress(accounts[0]) }).then((res:any)=>{     
+                     setId(res[res.length - 1] )
+                     console.log(res[res.length - 1])
+
+              });
           open();
           setVisible(false);
-          setId(res)
-          }
+        })
+  }
 
 
 
@@ -280,7 +288,7 @@ export function DropzoneButton() {
       <LoadingOverlay visible={visible} overlayBlur={2} />
 
       <Modal opened={opened} onClose={close} title="Accept agreement link" centered>
-        {<p >localhost:3000/accept?id={id}</p>}
+        {<p>localhost:3000/accept?id={id}</p>}
       </Modal>
      
       <Button
