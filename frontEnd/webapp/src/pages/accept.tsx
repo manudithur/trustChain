@@ -1,10 +1,12 @@
-import { Container, Grid, Button, rem, createStyles, Title } from "@mantine/core";
+import { Container, Grid, Button, rem,Modal, createStyles, Title,LoadingOverlay } from "@mantine/core";
 import { SrvRecord } from "dns";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import smartContract from '../smartContract/AgreementContract.json';
 import contractAddress from '../smartContract/conctractAddress.json';
 import { ethers } from 'ethers';
+import { useDisclosure } from '@mantine/hooks';
+
 import Web3 from 'web3';
 
 const useStyles = createStyles((theme) => ({
@@ -23,6 +25,9 @@ const useStyles = createStyles((theme) => ({
 
 export default function accept(){
     const {classes} = useStyles();
+    const [visible, setVisible] = useState(false);
+    
+    const [opened, { open, close }] = useDisclosure(false);
 
     const router = useRouter();
     const {id} = router.query;
@@ -47,6 +52,7 @@ export default function accept(){
              
         var myContractInstance = new web3.eth.Contract(smartContract.abi as any, contractAddress.address);
         // step 3 - Submit transaction to metamask
+        setVisible(true)
         var aux = await myContractInstance.methods.getBalance(id).call({
             from: web3.utils.toChecksumAddress(accounts[0]), 
             gas: 0x00, 
@@ -57,7 +63,8 @@ export default function accept(){
                 from: web3.utils.toChecksumAddress(accounts[0]), 
                 value: resp,
                 
-             }).then(console.log("termine"))                  
+             }).then(() =>{ setVisible(false) ; open()              
+             })
             })
         
             
@@ -82,6 +89,10 @@ export default function accept(){
                             >
                             Accept Agreement
                         </Button>
+                        <LoadingOverlay visible={visible} overlayBlur={2} />
+                        <Modal opened={opened} onClose={() =>{close();router.push("/")}} title="Accept agreement confirm" centered>
+                     {<p >Se acepto el agreement</p>}
+                    </Modal>
                     </Container>
                 </Grid.Col>
                 <Grid.Col span={4}/>

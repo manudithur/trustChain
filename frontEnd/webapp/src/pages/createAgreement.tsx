@@ -161,7 +161,7 @@ import { TextInput } from '@mantine/core';
 
 
 import { useRef } from 'react';
-import { Group} from '@mantine/core';
+import { Group,Modal,LoadingOverlay} from '@mantine/core';
 import { Dropzone, MIME_TYPES } from '@mantine/dropzone';
 import { IconCloudUpload, IconX, IconDownload } from '@tabler/icons-react';
 import { useRouter } from 'next/router';
@@ -172,13 +172,17 @@ import contractAddress from '../smartContract/conctractAddress.json';
 import { ethers } from 'ethers';
 import Web3 from 'web3';
 import { AbiItem } from 'web3-utils'
+import { useDisclosure } from '@mantine/hooks';
 
 
 export function DropzoneButton() {
+  const [visible, setVisible] = useState(false);
+  const [id, setId] = useState('')
 
   const { classes, theme } = useStyles();
 	const [selectedFile, setSelectedFile] = useState();
   const [isFilePicked, setIsFilePicked] = useState(false);
+  const [opened, { open, close }] = useDisclosure(false);
 
 	const changeHandler = (event : any) => {
 		setSelectedFile(event);
@@ -212,22 +216,22 @@ export function DropzoneButton() {
          
     var myContractInstance = new web3.eth.Contract(smartContract.abi as any, contractAddress.address);
     // step 3 - Submit transaction to metamask
-
-    var aux = await myContractInstance.methods.createAgreement(web3.utils.toWei(agreementAmount, 'ether')).send({
+    var res = await myContractInstance.methods.createAgreement(web3.utils.toWei(agreementAmount, 'ether')).call({
            from: web3.utils.toChecksumAddress(accounts[0]), 
            gas: 0x00, 
            gasPrice: 0x00
         })
-
-  }
+          open();
+          setVisible(false);
+          setId(res)
+          }
 
 
 
 
   return (
     <div style={{alignContent: 'center', height: "100vh"}}>
-    <TextInput mx={100} label="Buyer Wallet" placeholder={buyerAddres} onChange={(e: React.FormEvent<HTMLInputElement>) =>{setBuyerAddres(e.currentTarget.value)}} labelProps={{ style: { color: 'Black' } }}/>
-    <TextInput mx={100} mt={'sm'} label="Agreement Amount" placeholder="0" onChange={(e: React.FormEvent<HTMLInputElement>) =>{setAgreementAmount(e.currentTarget.value)}} rightSection={<TextInput variant="unstyled" size="xs" value="ETH" readOnly />} labelProps={{ style: { color: 'black' } }}/>   
+      <TextInput mx={100} mt={'sm'} label="Agreement Amount" placeholder="0" onChange={(e: React.FormEvent<HTMLInputElement>) =>{setAgreementAmount(e.currentTarget.value)}} rightSection={<TextInput variant="unstyled" size="xs" value="ETH" readOnly />} labelProps={{ style: { color: 'black' } }}/>   
     <div className={classes.wrapper} style={{marginLeft: 300, marginRight: 300, marginTop: 50}}>
       <Dropzone
         openRef={openRef}
@@ -273,7 +277,11 @@ export function DropzoneButton() {
         </div>
        
       </Dropzone>
+      <LoadingOverlay visible={visible} overlayBlur={2} />
 
+      <Modal opened={opened} onClose={close} title="Accept agreement link" centered>
+        {<p >localhost:3000/accept?id={id}</p>}
+      </Modal>
      
       <Button
               variant="gradient"
@@ -281,7 +289,10 @@ export function DropzoneButton() {
               size="xl"
               ml={43}
               className={classes.control}
-              onClick={createAgreement}
+              onClick={()=>{
+                createAgreement()
+                setVisible(true)
+              }}
               mt={60}
             >
               Create Agreement
