@@ -213,7 +213,7 @@ export function DropzoneButton() {
     var myContractInstance = new web3.eth.Contract(smartContract.abi as any, contractAddress.address);
     // step 3 - Submit transaction to metamask
 
-    var aux = await myContractInstance.methods.createAgreement(ethers.utils.parseEther(agreementAmount)).send({
+    var aux = await myContractInstance.methods.createAgreement(web3.utils.toWei(agreementAmount, 'ether')).send({
            from: web3.utils.toChecksumAddress(accounts[0]), 
            gas: 0x00, 
            gasPrice: 0x00

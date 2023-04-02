@@ -52,14 +52,14 @@ export default function accept(){
             gas: 0x00, 
             gasPrice: 0x00
          }).then((resp:any)=>{
-            console.log(resp);
-        })
-         
-        var aux2 = await myContractInstance.methods.signAgreement(id).send({
-               from: web3.utils.toChecksumAddress(accounts[0]), 
-               value: aux,
-               
+            console.log(resp)
+            myContractInstance.methods.signAgreement(id).send({
+                from: web3.utils.toChecksumAddress(accounts[0]), 
+                value: resp,
+                
+             }).then(console.log("termine"))                  
             })
+        
             
     
       }
