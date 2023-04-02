@@ -217,7 +217,7 @@ function FancyTitle() {
                 variant="gradient"
                 gradient={{ from: 'pink', to: 'yellow' }}
       >
-        Why to choose PayPort
+        Why PayPort
       </Text>
     </Title>
   );

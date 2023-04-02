@@ -90,8 +90,7 @@ export default function accept(){
                             Accept Agreement
                         </Button>
                         <LoadingOverlay visible={visible} overlayBlur={2} />
-                        <Modal opened={opened} onClose={() =>{close();router.push("/")}} title="Accept agreement confirm" centered>
-                     {<p >Se acepto el agreement</p>}
+                        <Modal opened={opened} onClose={() =>{close();router.push("/")}} title="Agreement accepted succesfully!" centered>
                     </Modal>
                     </Container>
                 </Grid.Col>
